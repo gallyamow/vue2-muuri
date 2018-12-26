@@ -2,6 +2,7 @@ import Grid from './components/Grid'
 import Item from './components/Item'
 
 /**
+ * todo: env? or const version = '__VERSION__'
  * @const {string} muuri version.
  */
 const VERSION = 'C_PKG_VERSION'
