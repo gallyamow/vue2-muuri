@@ -4,7 +4,7 @@
     ref="container"
     :class="['m-grid', containerClass ? containerClass : '']"
   >
-    <slot />
+    <slot/>
   </div>
 </template>
 
@@ -195,37 +195,90 @@
     }
   }
 
+  const computed = {
+    options () {
+      return MUURI_GRID_OPTIONS.reduce((obj, option) => {
+        if (this[option] !== undefined) {
+          obj[option] = this[option]
+        }
+        return obj
+      }, {})
+    }
+  }
+
+  /**
+   * options watchers
+   * @type {*}
+   */
+  const optionWatchers = MUURI_GRID_OPTIONS.reduce((obj, option) => {
+    obj[option] = function (value) {
+      // todo: find proper way
+      this.$muuri._settings[option] = value
+      this.refresh()
+    }
+    return obj
+  }, {})
+
+  const watch = {
+    ...optionWatchers
+  }
+
+  const methods = {
+    refresh () {
+      this.$muuri.layout()
+    },
+    addItem (id, item) {
+      // todo: find proper way
+      this.items.push(item.$el)
+    },
+    listen () {
+      MUURI_GRID_EVENTS.forEach((event) => {
+        this.listeners[event] = this.getListenerFunction(event, this)
+        this.$muuri.on(event, this.listeners[event])
+      })
+    },
+    unlisten () {
+      MUURI_GRID_EVENTS.forEach((event) => {
+        this.$muuri.off(event, this.listeners[event])
+        delete this.listeners[event]
+      })
+    },
+    getListenerFunction (event, ctx) {
+      return function (...args) {
+        ctx.onEvent(event, args)
+      }
+    },
+    onEvent (event, ...args) {
+      this.$emit(event, args)
+    }
+  }
+
   export default {
     name: 'MGrid',
-    props,
-    data () {
-      return {}
-    },
     /**
      * @property {Muuri|undefined} $muuri
      */
     $muuri: undefined,
-    computed: {
-      /**
-       * @returns {HTMLElement[]}
-       */
-      items () {
-        return this.$slots.default.map(vnode => {
-          return vnode.elm
-        })
-      },
-
-      options () {
-        return MUURI_GRID_OPTIONS.reduce((obj, key) => {
-          if (this[key] !== undefined) {
-            obj[key] = this[key]
-          }
-          return obj
-        }, {})
+    props,
+    data () {
+      return {
+        /**
+         * @property {HTMLElement[]}
+         */
+        items: [],
+        /**
+         * @property {Function[]}
+         */
+        listeners: {}
       }
     },
-
+    computed,
+    watch,
     mounted () {
+      this.items = (this.$slots.default || []).map(vnode => {
+        return vnode.elm
+      })
+
       this.$muuri = new Muuri(this.$refs.container, { items: this.items, ...this.options })
       this.listen()
       this.$once('hook:beforeDestroy', () => {
@@ -235,22 +288,7 @@
 
       // console.log(this.$muuri)
     },
-
-    methods: {
-      listen () {
-        MUURI_GRID_EVENTS.forEach((event) => {
-          this.$muuri.on(event, this.onEvent)
-        })
-      },
-      unlisten () {
-        MUURI_GRID_EVENTS.forEach((event) => {
-          this.$muuri.off(event, this.onEvent)
-        })
-      },
-      onEvent (event, ...args) {
-        this.$emit(event, args)
-      }
-    }
+    methods
   }
 
   /**

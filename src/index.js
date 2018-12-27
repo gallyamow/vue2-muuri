@@ -1,5 +1,5 @@
-import Grid from './components/Grid'
-import Item from './components/Item'
+import MGrid from './components/MGrid'
+import MItem from './components/MItem'
 
 /**
  * todo: env? or const version = '__VERSION__'
@@ -18,8 +18,8 @@ function plugin (Vue, options = {}) {
   }
   plugin.installed = true
 
-  Vue.component(Grid.name, Grid)
-  Vue.component(Item.name, Item)
+  Vue.component(MGrid.name, MGrid)
+  Vue.component(MItem.name, MItem)
 }
 
 export default plugin
@@ -27,8 +27,8 @@ export default plugin
 export {
   VERSION,
   plugin as install,
-  Grid,
-  Item
+  MGrid,
+  MItem
 }
 
 /**

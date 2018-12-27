@@ -1,4 +1,4 @@
-{
+for_higlight = {
   mode: 'development',
   context: '/work/projects/vue2-muuri',
   devtool: 'cheap-module-eval-source-map',
@@ -1027,7 +1027,8 @@
       {
         test: /\.jsx?$/,
         exclude: [
-          function () { /* omitted long function */ }
+          function () { /* omitted long function */
+          }
         ],
         use: [
           /* config.module.rule('js').use('cache-loader') */
@@ -1067,7 +1068,8 @@
               emitWarning: true,
               emitError: false,
               eslintPath: '/work/projects/vue2-muuri/node_modules/eslint/lib/api.js',
-              formatter: function () { /* omitted long function */ }
+              formatter: function () { /* omitted long function */
+              }
             }
           }
         ]
@@ -1092,10 +1094,12 @@
     new FriendlyErrorsWebpackPlugin(
       {
         additionalTransformers: [
-          function () { /* omitted long function */ }
+          function () { /* omitted long function */
+          }
         ],
         additionalFormatters: [
-          function () { /* omitted long function */ }
+          function () { /* omitted long function */
+          }
         ]
       }
     ),
@@ -1108,7 +1112,8 @@
     /* config.plugin('html') */
     new HtmlWebpackPlugin(
       {
-        templateParameters: function () { /* omitted long function */ },
+        templateParameters: function () { /* omitted long function */
+        },
         template: '/work/projects/vue2-muuri/public/index.html'
       }
     ),

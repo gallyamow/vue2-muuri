@@ -56,3 +56,10 @@ export const MUURI_GRID_EVENTS = [
   'dragReleaseEnd',
   'destroy'
 ]
+
+export const getUuid = (function () {
+  let counter = 0
+  return function () {
+    return ++counter
+  }
+})()

@@ -7,7 +7,11 @@
 <script>
   export default {
     name: 'MItem',
-    props: {}
+    props: {},
+    mounted () {
+      // todo: find proper way
+      this.$parent.addItem(this.id, this)
+    }
   }
 </script>
 
