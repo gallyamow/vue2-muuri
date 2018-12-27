@@ -2,7 +2,7 @@
   <div
     v-if="true"
     ref="container"
-    :class="['m-grid', containerClass]"
+    :class="['m-grid', containerClass ? containerClass : '']"
   >
     <slot />
   </div>
@@ -10,6 +10,7 @@
 
 <script>
   import Muuri from 'muuri'
+  import { MUURI_GRID_EVENTS, MUURI_GRID_OPTIONS } from '../consts'
 
   const props = {
     /**
@@ -60,13 +61,15 @@
      * @param {(Boolean|Number)} [options.layoutOnResize=100]
      */
     layoutOnResize: {
-      type: [Boolean, Number]
+      type: [Boolean, Number],
+      default: undefined
     },
     /**
      * @param {Boolean} [options.layoutOnInit=true]
      */
     layoutOnInit: {
-      type: Boolean
+      type: Boolean,
+      default: undefined
     },
     /**
      * @param {Number} [options.layoutDuration=300]
@@ -90,7 +93,8 @@
      * @param {Boolean} [options.dragEnabled=false]
      */
     dragEnabled: {
-      type: Boolean
+      type: Boolean,
+      default: undefined
     },
     /**
      * @param {?HTMLElement} [options.dragContainer=null]
@@ -114,7 +118,8 @@
      * @param {(Boolean|Function)} [options.dragSort=true]
      */
     dragSort: {
-      type: [Boolean, Function]
+      type: [Boolean, Function],
+      default: undefined
     },
     /**
      * @param {Number} [options.dragSortInterval=100]
@@ -196,6 +201,10 @@
     data () {
       return {}
     },
+    /**
+     * @property {Muuri|undefined} $muuri
+     */
+    $muuri: undefined,
     computed: {
       /**
        * @returns {HTMLElement[]}
@@ -207,24 +216,40 @@
       },
 
       options () {
-        return {}
+        return MUURI_GRID_OPTIONS.reduce((obj, key) => {
+          if (this[key] !== undefined) {
+            obj[key] = this[key]
+          }
+          return obj
+        }, {})
       }
     },
 
     mounted () {
-      Object.defineProperties(this, {
-        /**
-         * @property {Muuri|undefined}
-         */
-        $muuri: {
-          enumerable: true,
-          get: () => new Muuri(this.$refs.container, { items: this.items, ...this.options })
-        }
-      })
-
-      this.$once('hook:beforeDestroy', function () {
+      this.$muuri = new Muuri(this.$refs.container, { items: this.items, ...this.options })
+      this.listen()
+      this.$once('hook:beforeDestroy', () => {
+        this.unlisten()
         this.$muuri.destroy(true)
       })
+
+      // console.log(this.$muuri)
+    },
+
+    methods: {
+      listen () {
+        MUURI_GRID_EVENTS.forEach((event) => {
+          this.$muuri.on(event, this.onEvent)
+        })
+      },
+      unlisten () {
+        MUURI_GRID_EVENTS.forEach((event) => {
+          this.$muuri.off(event, this.onEvent)
+        })
+      },
+      onEvent (event, ...args) {
+        this.$emit(event, args)
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="m-item">
-    <slot />
+    <slot/>
   </div>
 </template>
 
@@ -29,10 +29,4 @@
       z-index: 0;
     }
   }
-
-  /*.item-content {*/
-  /*position: relative;*/
-  /*width: 100%;*/
-  /*height: 100%;*/
-  /*}*/
 </style>
