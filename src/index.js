@@ -18,8 +18,8 @@ function plugin (Vue, options = {}) {
   }
   plugin.installed = true
 
-  Vue.use(Grid, options)
-  Vue.use(Item, options)
+  Vue.component(Grid.name, Grid)
+  Vue.component(Item.name, Item)
 }
 
 export default plugin

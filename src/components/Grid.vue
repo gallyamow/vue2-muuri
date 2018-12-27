@@ -1,7 +1,11 @@
 <template>
-    <div :class="['grid', containerClass]" ref="container">
-        <slot></slot>
-    </div>
+  <div
+    v-if="true"
+    ref="container"
+    :class="['m-grid', containerClass]"
+  >
+    <slot />
+  </div>
 </template>
 
 <script>
@@ -187,9 +191,11 @@
   }
 
   export default {
-    name: 'm-grid',
+    name: 'MGrid',
     props,
-
+    data () {
+      return {}
+    },
     computed: {
       /**
        * @returns {HTMLElement[]}
@@ -212,15 +218,13 @@
          */
         $muuri: {
           enumerable: true,
-          get: () => new Muuri(this.$refs.container, {items: this.items, ...this.options})
+          get: () => new Muuri(this.$refs.container, { items: this.items, ...this.options })
         }
       })
 
       this.$once('hook:beforeDestroy', function () {
         this.$muuri.destroy(true)
       })
-
-      console.log(this.$muuri)
     }
   }
 
@@ -248,31 +252,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .grid {
-        position: relative;
-    }
-
-    .item {
-        display: block;
-        position: absolute;
-        z-index: 1;
-
-        &.muuri-item-dragging {
-            z-index: 3;
-        }
-
-        &.muuri-item-releasing {
-            z-index: 2;
-        }
-
-        &.muuri-item-hidden {
-            z-index: 0;
-        }
-    }
-
-    .item-content {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
+  .m-grid {
+    position: relative;
+  }
 </style>
