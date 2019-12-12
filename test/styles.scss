@@ -53,12 +53,10 @@
 }
 
 .item {
-    position: absolute;
     width: 100px;
     height: 100px;
     line-height: 100px;
     margin: 10px;
-    z-index: 1;
     will-change: transform;
 }
 
@@ -69,14 +67,6 @@
 .item.muuri-item-dragging,
 .item.muuri-item-releasing {
     z-index: 9999;
-}
-
-.item.muuri-item-dragging {
-    cursor: move;
-}
-
-.item.muuri-item-hidden {
-    z-index: 0;
 }
 
 .item.h2 {

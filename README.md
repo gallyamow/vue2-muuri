@@ -29,4 +29,7 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## TODO
-* eslint in IDE
+
+* we use layoutSettings as alias of muuri's layout option
+* item methods
+* todo declarative sort + declarative 

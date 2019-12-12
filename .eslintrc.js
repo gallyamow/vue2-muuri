@@ -21,16 +21,16 @@ module.exports = {
 
   // override if necessary
   overrides: [
-    {
-      // fix проблемы первых отступов внутри <script>
-      files: ['*.vue'],
-      rules: {
-        indent: 0,
-        'vue/script-indent': [2, 2, {
-          'baseIndent': 1,
-          'switchCase': 1
-        }]
-      }
-    }
+    // {
+    //   // fix проблемы первых отступов внутри <script>
+    //   files: ['*.vue'],
+    //   rules: {
+    //     indent: 0,
+    //     'vue/script-indent': [2, 2, {
+    //       'baseIndent': 1,
+    //       'switchCase': 1
+    //     }]
+    //   }
+    // }
   ]
 }

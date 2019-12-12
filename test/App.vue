@@ -1,7 +1,9 @@
 <template>
   <div>
     <section class="grid-demo">
-      <h2 class="section-title"><span>Grid Demo</span></h2>
+      <h2 class="section-title">
+        <span>Grid Demo</span>
+      </h2>
 
       <div class="controls cf">
         <div class="control search">
@@ -11,11 +13,12 @@
             </i>
           </div>
           <input
+            v-model="searchTitle"
             class="control-field search-field form-control "
             type="text"
             name="search"
             placeholder="Search..."
-          />
+          >
         </div>
         <div class="control filter">
           <div class="control-icon">
@@ -96,16 +99,19 @@
       </div>
 
       <MGrid
+        ref="grid"
         container-class="grid"
         item-class="item"
-        :drag-enabled="true"
+        :drag-enabled="false"
         :show-duration="300"
-        :layout="layoutOptions"
+        :layout-options="layoutOptions"
       >
         <MItem
           v-for="item in items"
           :key="item.id"
           :class="['item', 'w'+item.width, 'h'+item.height, item.color]"
+          :data-title="item.title"
+          :data-color="item.color"
         >
           <div class="item-content">
             <div class="card">
@@ -141,82 +147,147 @@
 </template>
 
 <script>
-  import { getUuid } from '@/consts'
-  import MGrid from '@/components/MGrid'
-  import MItem from '@/components/MItem'
+import { getUuid } from '@/consts'
+import MGrid from '@/components/MGrid'
+import MItem from '@/components/MItem'
 
-  const CHARACTERS = 'abcdefghijklmnopqrstuvwxyz'
+const CHARACTERS = 'abcdefghijklmnopqrstuvwxyz'
 
-  /**
-   * inspired by https://codepen.io/bcwang/pen/OxRMeb
-   */
-  export default {
-    name: 'App',
-    components: {
-      MGrid,
-      MItem
-    },
-    data () {
-      return {
-        selectedPosition: 'left-top',
-        selectedSorting: 'order',
-        selectedColor: '',
-        items: [],
-        positions: {
-          'left-top': 'Left Top',
-          'left-top-fillgaps': 'Left Top (fill gaps)',
-          'right-top': 'Right Top',
-          'right-top-fillgaps': 'Right Top (fill gaps)',
-          'left-bottom': 'Left Bottom',
-          'left-bottom-fillgaps': 'Left Bottom (fill gaps)',
-          'right-bottom': 'Right Bottom',
-          'right-bottom-fillgaps': 'Right Bottom (fill gaps)'
-        },
-        sorting: {
-          'order': 'Drag',
-          'title': 'Title (drag disabled)',
-          'color': 'Color (drag disabled)'
-        },
-        colors: {
-          'red': 'Red',
-          'blue': 'Blue',
-          'green': 'Green'
-        }
-      }
-    },
-    computed: {
-      /**
-       * @returns {LayoutOptions}
-       */
-      layoutOptions () {
-        return {
-          horizontal: false,
-          alignRight: this.selectedPosition.indexOf('right') > -1,
-          alignBottom: this.selectedPosition.indexOf('bottom') > -1,
-          fillGaps: this.selectedPosition.indexOf('fillgaps') > -1
-        }
-      }
-    },
-    created () {
-      this.addMoreItems(20)
-    },
-    methods: {
-      addMoreItems (count) {
-        this.items = this.items.concat([...Array(count)].map(() => this.generateRandomItem()))
+/**
+ * inspired by https://codepen.io/bcwang/pen/OxRMeb
+ */
+export default {
+  name: 'App',
+  components: {
+    MGrid,
+    MItem
+  },
+
+  data () {
+    return {
+      selectedPosition: 'left-top',
+      selectedSorting: 'order',
+      searchTitle: '',
+      selectedColor: '',
+      items: [],
+      positions: {
+        'left-top': 'Left Top',
+        'left-top-fillgaps': 'Left Top (fill gaps)',
+        'right-top': 'Right Top',
+        'right-top-fillgaps': 'Right Top (fill gaps)',
+        'left-bottom': 'Left Bottom',
+        'left-bottom-fillgaps': 'Left Bottom (fill gaps)',
+        'right-bottom': 'Right Bottom',
+        'right-bottom-fillgaps': 'Right Bottom (fill gaps)'
       },
-      generateRandomItem () {
-        const id = getUuid()
-        const color = this.getRandomItems(Object.keys(this.colors))
-        const title = this.getRandomItems(CHARACTERS) + this.getRandomItems(CHARACTERS)
-        const width = Math.floor(Math.random() * 2) + 1
-        const height = Math.floor(Math.random() * 2) + 1
-        return { id, color, title, width, height }
+      sorting: {
+        'order': 'Drag',
+        'title': 'Title (drag disabled)',
+        'color': 'Color (drag disabled)'
       },
-      getRandomItems (collections) {
-        return collections[Math.floor(Math.random() * collections.length)]
+      colors: {
+        'red': 'Red',
+        'blue': 'Blue',
+        'green': 'Green'
       }
     }
+  },
+
+  computed: {
+    /**
+     * @returns {LayoutOptions}
+     */
+    layoutOptions () {
+      return {
+        horizontal: false,
+        alignRight: this.selectedPosition.indexOf('right') > -1,
+        alignBottom: this.selectedPosition.indexOf('bottom') > -1,
+        fillGaps: this.selectedPosition.indexOf('fillgaps') > -1
+      }
+    }
+  },
+
+  watch: {
+    selectedColor (val) {
+      this.filterItems({ title: this.searchTitle, color: val })
+    },
+    searchTitle (val) {
+      this.filterItems({ color: this.selectedColor, title: val })
+    },
+    selectedSorting (val) {
+      this.sortItems(val)
+    }
+  },
+
+  created () {
+    this.addMoreItems(20)
+  },
+
+  methods: {
+    addMoreItems (count) {
+      this.items = this.items.concat([...Array(count)].map(() => this.generateRandItem()))
+    },
+
+    filterItems ({ title, color }) {
+      this.$refs.grid.filter(item => {
+        const element = item.getElement()
+        const elementTitle = element.getAttribute('data-title') || ''
+        const elementColor = element.getAttribute('data-color') || ''
+
+        const isTitleMatch = title ? elementTitle.toLowerCase().indexOf(title.toLowerCase()) !== -1 : true
+        const isColorMatch = color ? elementColor === color : true
+
+        return isTitleMatch && isColorMatch
+      })
+    },
+
+    sortItems (order) {
+      const $grid = this.$refs.grid
+
+      let comparator = null
+      switch (order) {
+        case 'title':
+          comparator = this.compareItemTitle
+          break
+        case 'color':
+          comparator = this.compareItemColor
+          break
+        case 'order':
+          comparator = $grid.getItems()
+          break
+      }
+      $grid.sort(comparator)
+    },
+
+    compareItemTitle (a, b) {
+      const aTitle = a.getElement().getAttribute('data-title') || ''
+      const bTitle = b.getElement().getAttribute('data-title') || ''
+
+      return aTitle < bTitle ? -1 : aTitle > bTitle ? 1 : 0
+    },
+
+    compareItemColor (a, b) {
+      const aColor = a.getElement().getAttribute('data-color') || ''
+      const bColor = b.getElement().getAttribute('data-color') || ''
+
+      return aColor < bColor ? -1 : aColor > bColor ? 1 : 0
+    },
+
+    generateRandItem () {
+      const id = getUuid()
+      const color = this.getRandValue(Object.keys(this.colors))
+      const title = this.getRandValue(CHARACTERS) + this.getRandValue(CHARACTERS)
+      const width = Math.floor(Math.random() * 2) + 1
+      const height = Math.floor(Math.random() * 2) + 1
+
+      return { id, color, title, width, height }
+    },
+
+    getRandValue (collections) {
+      return collections[Math.floor(Math.random() * collections.length)]
+    }
   }
+}
 </script>
 
 <style>

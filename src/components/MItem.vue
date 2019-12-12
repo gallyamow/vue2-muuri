@@ -1,18 +1,20 @@
 <template>
   <div class="m-item">
-    <slot/>
+    <slot />
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'MItem',
-    props: {},
-    mounted () {
-      // todo: find proper way
-      this.$parent.addItem(this.id, this)
-    }
+export default {
+  name: 'MItem',
+
+  props: {},
+
+  mounted () {
+    // todo: find proper way
+    this.$parent.addItem(this.id, this)
   }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -23,6 +25,7 @@
 
     &.muuri-item-dragging {
       z-index: 3;
+      cursor: move;
     }
 
     &.muuri-item-releasing {

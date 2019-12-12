@@ -5,7 +5,7 @@ export const MUURI_GRID_OPTIONS = [
   'hideDuration',
   'hideEasing',
   'hiddenStyles',
-  'layout',
+  'layoutOptions',
   'layoutOnResize',
   'layoutOnInit',
   'layoutDuration',
@@ -28,6 +28,26 @@ export const MUURI_GRID_OPTIONS = [
   'itemPositioningClass',
   'itemDraggingClass',
   'itemReleasingClass'
+]
+
+export const MUURI_GRID_METHODS = [
+  'getElement',
+  'getItems',
+  'refreshItems',
+  'refreshSortData',
+  'synchronize',
+  'layout',
+  'add',
+  'remove',
+  'show',
+  'hide',
+  'filter',
+  'sort',
+  'move',
+  'send',
+  'on',
+  'off',
+  'destroy'
 ]
 
 export const MUURI_GRID_EVENTS = [
@@ -57,9 +77,18 @@ export const MUURI_GRID_EVENTS = [
   'destroy'
 ]
 
-export const getUuid = (function () {
+export const getUuid = (() => {
   let counter = 0
   return function () {
     return ++counter
   }
 })()
+
+export const translateOptionName = name => {
+  switch (name) {
+    // alias of layout because muuri has such method name
+    case 'layoutOptions':
+      return 'layout'
+  }
+  return name
+}
