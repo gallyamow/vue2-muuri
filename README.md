@@ -1,32 +1,12 @@
 # vue2-muuri
 
-## Project setup
-```
-npm install
-```
+[Muuri](https://github.com/haltu/muuri) is a JavaScript layout engine that allows you to build all kinds of layouts and make them responsive, sortable, filterable, draggable and/or animated.
 
-### Compiles and hot-reloads for development
+### Run test app
+
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## TODO
 
