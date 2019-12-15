@@ -10,7 +10,7 @@ const VERSION = 'C_PKG_VERSION'
 /**
  * Registers all VueLayers components.
  * @param {Vue|VueConstructor} Vue
- * @param {Vue2MuuriOptions} [options]
+ * @param {*} options
  */
 function plugin (Vue, options = {}) {
   if (plugin.installed) {
@@ -30,8 +30,3 @@ export {
   MGrid,
   MItem
 }
-
-/**
- * @typedef {Object} Vue2MuuriOptions
- * @property {string} [prop1] Prop1 description
- */

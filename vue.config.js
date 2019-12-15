@@ -5,5 +5,9 @@ module.exports = {
       .clear()
       .add('./demo/main.js')
       .end()
+      .entry('library')
+      .clear()
+      .add('./src/index.js')
+      .end()
   }
 }

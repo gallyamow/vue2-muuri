@@ -34,21 +34,23 @@
             </i>
           </div>
 
-          <select
-            v-model="selectedColor"
-            class="control-field filter-field form-control"
-          >
-            <option value="">
-              All
-            </option>
-            <option
-              v-for="(label, key) in colors"
-              :key="key"
-              :value="key"
+          <label>
+            <select
+              v-model="selectedColor"
+              class="control-field filter-field form-control"
             >
-              {{ label }}
-            </option>
-          </select>
+              <option value="">
+                All
+              </option>
+              <option
+                v-for="(label, key) in colors"
+                :key="key"
+                :value="key"
+              >
+                {{ label }}
+              </option>
+            </select>
+          </label>
         </div>
 
         <div class="control sort">
@@ -63,18 +65,20 @@
             </i>
           </div>
 
-          <select
-            v-model="selectedSorting"
-            class="control-field sort-field form-control"
-          >
-            <option
-              v-for="(label, key) in sorting"
-              :key="key"
-              :value="key"
+          <label>
+            <select
+              v-model="selectedSorting"
+              class="control-field sort-field form-control"
             >
-              {{ label }}
-            </option>
-          </select>
+              <option
+                v-for="(label, key) in sorting"
+                :key="key"
+                :value="key"
+              >
+                {{ label }}
+              </option>
+            </select>
+          </label>
         </div>
 
         <div class="control layout">
@@ -88,18 +92,21 @@
               &#xE313;
             </i>
           </div>
-          <select
-            v-model="selectedPosition"
-            class="control-field layout-field form-control"
-          >
-            <option
-              v-for="(label, key) in positions"
-              :key="key"
-              :value="key"
+
+          <label>
+            <select
+              v-model="selectedPosition"
+              class="control-field layout-field form-control"
             >
-              {{ label }}
-            </option>
-          </select>
+              <option
+                v-for="(label, key) in positions"
+                :key="key"
+                :value="key"
+              >
+                {{ label }}
+              </option>
+            </select>
+          </label>
         </div>
       </div>
 
@@ -155,11 +162,17 @@
 </template>
 
 <script>
-import { getUuid } from '@/consts'
 import MGrid from '@/components/MGrid'
 import MItem from '@/components/MItem'
 
 const CHARACTERS = 'abcdefghijklmnopqrstuvwxyz'
+
+const getUuid = (() => {
+  let counter = 0
+  return function () {
+    return ++counter
+  }
+})()
 
 /**
  * inspired by https://codepen.io/bcwang/pen/OxRMeb

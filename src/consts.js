@@ -76,19 +76,3 @@ export const MUURI_GRID_EVENTS = [
   'dragReleaseEnd',
   'destroy'
 ]
-
-export const getUuid = (() => {
-  let counter = 0
-  return function () {
-    return ++counter
-  }
-})()
-
-export const translateOptionName = name => {
-  switch (name) {
-    // alias of layout because muuri has such method name
-    case 'layoutOptions':
-      return 'layout'
-  }
-  return name
-}

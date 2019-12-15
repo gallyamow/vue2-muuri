@@ -10,7 +10,7 @@
 
 <script>
 import Muuri from 'muuri'
-import { MUURI_GRID_EVENTS, MUURI_GRID_OPTIONS, MUURI_GRID_METHODS, translateOptionName } from '../consts'
+import { MUURI_GRID_EVENTS, MUURI_GRID_OPTIONS, MUURI_GRID_METHODS } from '../consts'
 
 const props = {
   /**
@@ -193,6 +193,15 @@ const props = {
   itemReleasingClass: {
     type: String
   }
+}
+
+export const translateOptionName = name => {
+  switch (name) {
+    // alias of layout because muuri has such method name
+    case 'layoutOptions':
+      return 'layout'
+  }
+  return name
 }
 
 /**
