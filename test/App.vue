@@ -20,6 +20,7 @@
             placeholder="Search..."
           >
         </div>
+
         <div class="control filter">
           <div class="control-icon">
             <i class="material-icons">
@@ -32,6 +33,7 @@
               &#xE313;
             </i>
           </div>
+
           <select
             v-model="selectedColor"
             class="control-field filter-field form-control"
@@ -48,6 +50,7 @@
             </option>
           </select>
         </div>
+
         <div class="control sort">
           <div class="control-icon">
             <i class="material-icons">
@@ -59,6 +62,7 @@
               &#xE313;
             </i>
           </div>
+
           <select
             v-model="selectedSorting"
             class="control-field sort-field form-control"
@@ -72,6 +76,7 @@
             </option>
           </select>
         </div>
+
         <div class="control layout">
           <div class="control-icon">
             <i class="material-icons">
@@ -107,7 +112,7 @@
         :layout-options="layoutOptions"
       >
         <MItem
-          v-for="item in items"
+          v-for="(item, index) in items"
           :key="item.id"
           :class="['item', 'w'+item.width, 'h'+item.height, item.color]"
           :data-title="item.title"
@@ -122,7 +127,10 @@
                 {{ item.title }}
               </div>
               <div class="card-remove">
-                <i class="material-icons">
+                <i
+                  class="material-icons"
+                  @click="removeItem(index)"
+                >
                   &#xE5CD;
                 </i>
               </div>
@@ -181,7 +189,7 @@ export default {
         'right-bottom-fillgaps': 'Right Bottom (fill gaps)'
       },
       sorting: {
-        'order': 'Drag',
+        'order': 'No sorting',
         'title': 'Title (drag disabled)',
         'color': 'Color (drag disabled)'
       },
@@ -209,10 +217,10 @@ export default {
 
   watch: {
     selectedColor (val) {
-      this.filterItems({ title: this.searchTitle, color: val })
+      this.filterItems({ color: val })
     },
     searchTitle (val) {
-      this.filterItems({ color: this.selectedColor, title: val })
+      this.filterItems({ title: val })
     },
     selectedSorting (val) {
       this.sortItems(val)
@@ -224,18 +232,41 @@ export default {
   },
 
   methods: {
-    addMoreItems (count) {
-      this.items = this.items.concat([...Array(count)].map(() => this.generateRandItem()))
+    removeItem (index) {
+      const $grid = this.$refs.grid
+      const item = this.items[index]
+
+      if (item) {
+        $grid.hide(item, {
+          onFinish: () => {
+            this.$delete(this.items, index)
+          }
+        })
+      }
     },
 
-    filterItems ({ title, color }) {
-      this.$refs.grid.filter(item => {
+    addMoreItems (count) {
+      this.items = this.items.concat([...Array(count)].map(() => this.generateRandItem()))
+
+      // todo: late sorting, items are visible for short time period
+      this.$nextTick(() => {
+        this.filterItems()
+      })
+    },
+
+    filterItems ({ title = undefined, color = undefined } = {}) {
+      const titleValue = title === undefined ? this.searchTitle.toLowerCase() : title.toLowerCase()
+      const colorValue = color === undefined ? this.selectedColor : color
+
+      const $grid = this.$refs.grid
+
+      $grid.filter(item => {
         const element = item.getElement()
         const elementTitle = element.getAttribute('data-title') || ''
         const elementColor = element.getAttribute('data-color') || ''
 
-        const isTitleMatch = title ? elementTitle.toLowerCase().indexOf(title.toLowerCase()) !== -1 : true
-        const isColorMatch = color ? elementColor === color : true
+        const isTitleMatch = titleValue ? elementTitle.toLowerCase().indexOf(titleValue.toLowerCase()) !== -1 : true
+        const isColorMatch = colorValue ? elementColor === colorValue : true
 
         return isTitleMatch && isColorMatch
       })

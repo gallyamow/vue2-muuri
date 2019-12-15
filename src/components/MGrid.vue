@@ -51,7 +51,6 @@ const props = {
   },
   /**
    * Alias of layout because muuri has such method name
-   * todo: nested props validator
    * @param {(Function|LayoutOptions)} [options.layout]
    * @property
    */
@@ -196,17 +195,6 @@ const props = {
   }
 }
 
-const computed = {
-  propsToOptions () {
-    return MUURI_GRID_OPTIONS.reduce((obj, option) => {
-      if (this[option] !== undefined) {
-        obj[option] = this[option]
-      }
-      return obj
-    }, {})
-  }
-}
-
 /**
  * @type {Object<String, Function>}
  */
@@ -216,17 +204,13 @@ const muuriOptionWatchers = MUURI_GRID_OPTIONS.reduce((obj, option) => {
 
     // todo: find proper way to set options
     this.$muuri._settings[properOptionName] = value
-    this.refreshMuuri()
+    this.applySettingsMuuri()
   }
   return obj
 }, {})
 
-const watch = {
-  ...muuriOptionWatchers
-}
-
 /**
- * options watchers
+ * Watchers for muuri options
  * @type {Object<String, Function>}
  */
 const muuriMethods = MUURI_GRID_METHODS.reduce((obj, method) => {
@@ -236,43 +220,6 @@ const muuriMethods = MUURI_GRID_METHODS.reduce((obj, method) => {
   return obj
 }, {})
 
-const methods = {
-  ...muuriMethods,
-
-  refreshMuuri () {
-    this.$muuri.layout()
-  },
-
-  addItem (id, item) {
-    // todo: find proper way
-    this.items.push(item.$el)
-  },
-
-  listenMuuri () {
-    MUURI_GRID_EVENTS.forEach((event) => {
-      this.listeners[event] = this.getListenerFunction(event, this)
-      this.$muuri.on(event, this.listeners[event])
-    })
-  },
-
-  unlistenMuuri () {
-    MUURI_GRID_EVENTS.forEach((event) => {
-      this.$muuri.off(event, this.listeners[event])
-      delete this.listeners[event]
-    })
-  },
-
-  getListenerFunction (event, ctx) {
-    return function (...args) {
-      ctx.onEvent(event, args)
-    }
-  },
-
-  onEvent (event, ...args) {
-    this.$emit(event, args)
-  }
-}
-
 export default {
   name: 'MGrid',
 
@@ -281,12 +228,21 @@ export default {
    */
   $muuri: undefined,
 
+  provide () {
+    return {
+      itemAdded: this.itemAdded,
+      itemRemoved: this.itemRemoved
+    }
+  },
+
   props,
 
   data () {
     return {
+      $muuri: undefined,
+
       /**
-       * @property {HTMLElement[]}
+       * @property {MItem[]}
        */
       items: [],
       /**
@@ -296,16 +252,32 @@ export default {
     }
   },
 
-  computed,
+  computed: {
+    propsToOptions () {
+      return MUURI_GRID_OPTIONS.reduce((obj, option) => {
+        if (this[option] !== undefined) {
+          obj[option] = this[option]
+        }
+        return obj
+      }, {})
+    }
+  },
 
-  watch,
+  watch: {
+    ...muuriOptionWatchers
+  },
 
   mounted () {
+    // initial
     this.items = (this.$slots.default || []).map(vnode => {
-      return vnode.elm
+      return vnode.componentInstance
     })
 
-    this.$muuri = new Muuri(this.$refs.container, { items: this.items, ...this.propsToOptions })
+    this.$muuri = new Muuri(this.$refs.container, {
+      items: this.items.map(item => item.$el),
+      ...this.propsToOptions
+    })
+
     this.listenMuuri()
 
     this.$once('hook:beforeDestroy', () => {
@@ -314,30 +286,58 @@ export default {
       this.$muuri = undefined
     })
   },
-  methods
+
+  methods: {
+    ...muuriMethods,
+
+    itemAdded (item) {
+      this.items.push(item)
+
+      if (this.$muuri) {
+        // add не подхождит так как элементы могут скрываться и добавляться, нужно remove + add or change
+        this.$muuri.add(item.$el)
+      }
+    },
+
+    itemRemoved (item) {
+      this.items = this.items.filter(v => v !== item)
+
+      if (this.$muuri) {
+        // add не подхождит так как элементы могут скрываться и добавляться, нужно remove + add or change
+        this.$muuri.remove(item.$el)
+      }
+    },
+
+    // todo: implement
+    applySettingsMuuri () {
+      this.$muuri.layout()
+    },
+
+    listenMuuri () {
+      MUURI_GRID_EVENTS.forEach((event) => {
+        this.listeners[event] = this.getListenerFunction(event, this)
+        this.$muuri.on(event, this.listeners[event])
+      })
+    },
+
+    unlistenMuuri () {
+      MUURI_GRID_EVENTS.forEach((event) => {
+        this.$muuri.off(event, this.listeners[event])
+        delete this.listeners[event]
+      })
+    },
+
+    getListenerFunction (event, ctx) {
+      return function (...args) {
+        ctx.onEvent(event, args)
+      }
+    },
+
+    onEvent (event, ...args) {
+      this.$emit(event, args)
+    }
+  }
 }
-
-/**
- * @typedef {Object} LayoutOptions
- * @property {Boolean} [fillGaps]
- * @property {Boolean} [horizontal]
- * @property {Boolean} [alignRight]
- * @property {Boolean} [alignBottom]
- * @property {Boolean} [rounding]
- */
-
-/**
- * @typedef {Object} DragStartPredicate
- * @property {Number} [distance]
- * @property {Number} [delay]
- * @property {Boolean|String} [handle]
- */
-
-/**
- * @typedef {Object} DragSortPredicate
- * @property {Number} [threshold]
- * @property {String} [action]
- */
 </script>
 
 <style lang="scss" scoped>

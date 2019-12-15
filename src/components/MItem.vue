@@ -7,12 +7,15 @@
 <script>
 export default {
   name: 'MItem',
-
+  inject: ['itemAdded', 'itemRemoved'],
   props: {},
 
   mounted () {
-    // todo: find proper way
-    this.$parent.addItem(this.id, this)
+    this.itemAdded(this)
+  },
+
+  destroyed () {
+    this.itemRemoved(this)
   }
 }
 </script>
