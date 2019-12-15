@@ -3,7 +3,7 @@ module.exports = {
     config
       .entry('app')
       .clear()
-      .add('./test/main.js')
+      .add('./demo/main.js')
       .end()
   }
 }
