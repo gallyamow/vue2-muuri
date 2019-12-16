@@ -1,4 +1,15 @@
 module.exports = {
+  css: {
+    // use styles in js
+    extract: false
+  },
+
+  configureWebpack: {
+    externals: {
+      muuri: 'muuri',
+    }
+  },
+
   chainWebpack: config => {
     config
       .entry('app')

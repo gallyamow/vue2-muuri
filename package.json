@@ -1,13 +1,14 @@
 {
   "name": "vue2-muuri",
-  "version": "0.1.1",
-  "main": "dist/vue2-muuri.umd.js",
-  "unpkg": "dist/vue2-muuri.umd.min.js",
+  "version": "0.1.5",
+  "main": "./dist/vue2Muuri.common.js",
+  "unpkg": "./dist/vue2Muuri.umd.min.js",
   "description": "Vue binding for haltu/muuri (responsive, sortable, filterable and draggable grid layouts)",
   "author": "Ramil Gallyamov <gallyamow@gmail.com>",
   "scripts": {
     "demo": "vue-cli-service serve",
-    "build": "vue-cli-service build --target=lib ./src/index.js",
+    "build": "vue-cli-service build --target=lib --name=vue2Muuri ./src/index.js",
+    "clean": "rm -rf dist/*",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {},
@@ -40,5 +41,26 @@
   "peerDependencies": {
     "muuri": "^0.7.1",
     "vue": "^2.6.10"
-  }
+  },
+  "keywords": [
+    "vue2-muuri",
+    "vue",
+    "vuejs",
+    "vue2",
+    "vuejs2",
+    "vue plugins",
+    "vue components",
+    "muuri"
+  ],
+  "license": "MIT",
+  "directories": {
+    "lib": "./dist"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist",
+    "src",
+    "demo"
+  ]
 }
