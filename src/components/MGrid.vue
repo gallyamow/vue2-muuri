@@ -303,7 +303,7 @@ export default {
       this.items.push(item)
 
       if (this.$muuri) {
-        // add не подхождит так как элементы могут скрываться и добавляться, нужно remove + add or change
+        // todo: should I use remove before add?
         this.$muuri.add(item.$el)
       }
     },
@@ -312,7 +312,6 @@ export default {
       this.items = this.items.filter(v => v !== item)
 
       if (this.$muuri) {
-        // add не подхождит так как элементы могут скрываться и добавляться, нужно remove + add or change
         this.$muuri.remove(item.$el)
       }
     },
