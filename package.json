@@ -22,7 +22,7 @@
     "eslint-plugin-vue": "^5.2.3",
     "eslint-plugin-vue-libs": "^3.0.2",
     "hammerjs": "^2.0.8",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.10",
     "muuri": "^0.7.1",
